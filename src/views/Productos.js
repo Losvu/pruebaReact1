@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import FormularioProductos from '../components/FormularioProductos';
 import TablaProductos from '../components/TablaProductos';
 import { db } from '../database/firebaseConfig';
 
@@ -23,9 +24,9 @@ const Productos = () => {
   const eliminarProducto = async (id) => {
     try {
       await deleteDoc(doc(db, 'productos', id));
-      cargarDatos(); // Recargar la lista después de eliminar
+      cargarDatos();
     } catch (error) {
-      console.error('Error al eliminar producto:', error);
+      console.error('Error al eliminar:', error);
     }
   };
 
@@ -35,6 +36,7 @@ const Productos = () => {
 
   return (
     <View style={styles.container}>
+      <FormularioProductos cargarDatos={cargarDatos} />
       <TablaProductos productos={productos} eliminarProducto={eliminarProducto} />
     </View>
   );

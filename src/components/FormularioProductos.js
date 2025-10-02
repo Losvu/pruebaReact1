@@ -19,7 +19,7 @@ const FormularioProductos = ({ cargarDatos }) => {
       });
       setNombre('');
       setPrecio('');
-      cargarDatos(); // Volver a cargar la lista
+      cargarDatos();
     } catch (error) {
       console.error('Error al registrar producto:', error);
     }
