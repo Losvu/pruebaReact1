@@ -1,66 +1,44 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
-import { addDoc, collection } from 'firebase/firestore';
+import React, { useState } from "react";
+import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import { db } from "../database/firebaseConfig";
+import { collection, addDoc } from "firebase/firestore";
 
-const FormularioProductos = ({ cargarDatos }) => {
-  const [nombre, setNombre] = useState('');
-  const [precio, setPrecio] = useState('');
+const FormularioProductos = ({ actualizarProducto, modoEdicion, cargarDatos, nuevoProducto, manejoCambio, guardarProducto }) => {
+    const [nombre, setNombre] = useState("");
+    const [precio, setPrecio] = useState("");
 
-  const guardarProducto = async () => {
-    if (!nombre || !precio) {
-      alert('Por favor, completa todos los campos');
-      return;
-    }
 
-    try {
-      await addDoc(collection(db, 'productos'), {
-        nombre: nombre,
-        precio: parseFloat(precio),
-      });
-      setNombre('');
-      setPrecio('');
-      cargarDatos();
-    } catch (error) {
-      console.error('Error al registrar producto:', error);
-    }
-  };
+    return (
+        <View style={styles.container}>
+            <Text style={styles.titulo}>
+                {modoEdicion ? "Actuaizar Producto" : "Registro de Productos"}
+            </Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Nombre del producto"
+                value={nuevoProducto.nombre}
+                onChangeText={(nombre) => manejoCambio("nombre", nombre)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Precio"
+                value={nuevoProducto.precio}
+                onChangeText={(precio) => manejoCambio("precio", precio)}
+                keyboardType="numeric"
+            />
+            <Button 
+            title={modoEdicion ? "Actualizar" : "Guardar"}
+             onPress={modoEdicion? actualizarProducto : guardarProducto}   
+            />
+        </View>
+    );
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Registro de Productos</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre del producto"
-        value={nombre}
-        onChangeText={setNombre}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Precio"
-        value={precio}
-        onChangeText={setPrecio}
-        keyboardType="numeric"
-      />
-      <Button title="Guardar" onPress={guardarProducto} />
-    </View>
-  );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  titulo: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 10,
-  },
+    container: { padding: 20 },
+    titulo: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
+    input: { borderWidth: 1, borderColor: "#25c510ff", padding: 10, marginBottom: 10 }
 });
 
 export default FormularioProductos;
