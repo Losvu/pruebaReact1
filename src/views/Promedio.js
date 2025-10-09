@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../database/firebaseConfig";
+import TablaPromedio from "../components/TablaPromedio.js";
+import TituloPromedio from "../components/TituloPromedio.js";
+import FormularioEdades from "../components/FormularioEdades.js";
 
 const Promedio = () => {
   const [cargarDato, setCargarDato] = useState([]);
