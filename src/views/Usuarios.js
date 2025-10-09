@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Alert, FlatList } from "react-native";
 import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../firebaseConfig"; // 👈 tu configuración de Firebase
-import UsuarioForm from "../components/UsuarioForm";
-import UsuariosTable from "../components/UsuariosTable";
+import { db } from "../firebaseConfig";
+import UsuarioForm from "../components/Apartado Usuarios/UsuarioForm";
+import UsuariosTable from "../components/Apartado Usuarios/UsuariosTable";
 
 const API_URL = "https://g0h9o8gps8.execute-api.us-east-2.amazonaws.com/validarusuario"; // 👈 reemplaza con tu endpoint
 
