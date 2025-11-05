@@ -1,13 +1,12 @@
-import TituloPromedio from "../components/TituloPromedio.js";
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../database/firebaseConfig";
-import TablaPromedio from "../components/TablaPromedio.js";
-import TituloPromedio from "../components/TituloPromedio.js";
-import FormularioEdades from "../components/FormularioEdades.js";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet,Button } from "react-native";
+import { db } from "../database/firebaseConfig.js";
+import { collection, getDocs, doc, deleteDoc,where } from "firebase/firestore";
+import FormularioEdades from "../Components/FormulariosPromedio.js";
+import TablaPromedio from "../Components/TablaPromedios.js";
+import TituloPromedio from "../Components/TituloPromedios.js";
 
-const Promedio = () => {
+const Promedio = ({ cerrarSesion }) => {
   const [cargarDato, setCargarDato] = useState([]);
   const [promedio, setPromedio] = useState(null);
 
@@ -45,7 +44,7 @@ const Promedio = () => {
       const data = await response.json();
       setPromedio(data.promedio || null);
     } catch (error) {
-      console.error('Error al calcular promedio en API:', error);
+      console.error('Error al calcular promedio de api:', error);
     }
   };
 
@@ -67,6 +66,7 @@ const Promedio = () => {
 
   return (
     <View style={styles.container}>
+       <Button title="Cerrar Sesión" onPress={cerrarSesion} />
       <TituloPromedio promedio={promedio}/>
       <FormularioEdades cargarDatos={cargarDatos} />
       <TablaPromedio

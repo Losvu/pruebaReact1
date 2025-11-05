@@ -1,19 +1,16 @@
-// components/BotonEliminarProducto.js
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 
-const BotonEliminarProducto = ({ id, eliminarProducto }) => {
-  
+const BotonEliminarCiudad = ({ id, eliminarCiudad }) => {
   const [visible, setVisible] = useState(false);
 
   const confirmarEliminar = () => {
     setVisible(false);
-    eliminarProducto(id);
+    eliminarCiudad(id);
   };
 
   return (
     <View>
-      {/* Botón pequeño */}
       <TouchableOpacity
         style={styles.boton}
         onPress={() => setVisible(true)}
@@ -21,7 +18,6 @@ const BotonEliminarProducto = ({ id, eliminarProducto }) => {
         <Text style={styles.textoBoton}>🗑️</Text>
       </TouchableOpacity>
 
-      {/* Modal de confirmación */}
       <Modal
         visible={visible}
         transparent
@@ -30,7 +26,7 @@ const BotonEliminarProducto = ({ id, eliminarProducto }) => {
       >
         <View style={styles.overlay}>
           <View style={styles.modal}>
-            <Text style={styles.texto}>¿Eliminar este producto?</Text>
+            <Text style={styles.texto}>¿Eliminar esta ciudad?</Text>
 
             <View style={styles.fila}>
               <TouchableOpacity
@@ -91,5 +87,6 @@ const styles = StyleSheet.create({
   textoAccion: { color: "white", fontWeight: "bold" },
 });
 
-export default BotonEliminarProducto;
+export default BotonEliminarCiudad;
+
 

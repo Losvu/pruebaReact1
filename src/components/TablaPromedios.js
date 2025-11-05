@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import BotonEliminarProducto from './BotonEliminarProducto';
-import Promedio from '../view/Promedio';
+import BotonEliminarPromedio from './BotonEliminarPromedio';
 
 const TablaPromedio = ({ promedio, eliminarPromedio }) => {
 
@@ -17,17 +16,23 @@ const TablaPromedio = ({ promedio, eliminarPromedio }) => {
 
             {/* Lista de promedio */}
             <ScrollView>
-                {promedio.map((item) => (
-                    <View key={item.id} style={styles.fila}>
-                        <Text style={styles.celda}>{item.nombre}</Text>
-                        <Text style={styles.celda}>${item.edad}</Text>
-                        <View style={styles.celdaAcciones}>
-                            <BotonEliminarProducto
-                                id={item.id} eliminarProducto={eliminarPromedio}
-                            />
-                        </View>
+                {(!promedio || promedio.length === 0) ? (
+                    <View style={styles.fila}>
+                        <Text style={styles.celda}>No hay registros</Text>
                     </View>
-                ))}
+                ) : (
+                    (promedio || []).map((item) => (
+                        <View key={item.id} style={styles.fila}>
+                            <Text style={styles.celda}>{item.nombre}</Text>
+                            <Text style={styles.celda}>{item.edad}</Text>
+                            <View style={styles.celdaAcciones}>
+                                <BotonEliminarPromedio
+                                    id={item.id} eliminarPromedio={eliminarPromedio}
+                                />
+                            </View>
+                        </View>
+                    ))
+                )}
             </ScrollView>
         </View>
     );

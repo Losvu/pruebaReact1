@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import { db } from "../database/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
-import TituloPromedio from "./TituloPromedio";
+import TituloPromedio from "./TituloPromedios";
 
 const FormularioEdades = ({ cargarDatos }) => {
     const [nombre, setNombre] = useState("");
