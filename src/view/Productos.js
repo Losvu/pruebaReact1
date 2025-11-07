@@ -1,22 +1,17 @@
-
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Button } from "react-native";
 import { db } from "../database/firebaseConfig.js";
 import { collection, getDocs, doc, deleteDoc, addDoc, updateDoc } from "firebase/firestore";
-import FormularioProductos from "../components/FormularioProductos";
-import TablaProductos from "../components/TablaProductos.js";
+import FormularioProductos from "../Components/FormularioProductos.js";
+import TablaProductos from "../Components/TablaProductos.js";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import * as Clipboard from "expo-clipboard";
 
-
-const Productos = ({cerrarSesion}) => {
-
+const Productos = ({ cerrarSesion }) => {
   const [modoEdicion, setModoEdicion] = useState(false);
   const [productoId, setProductoId] = useState(null);
-
   const [productos, setProductos] = useState([]);
-
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre: "",
     precio: "",
@@ -96,13 +91,81 @@ const Productos = ({cerrarSesion}) => {
     setModoEdicion(true);
   };
 
+  const generarExcel = async () => {
+    try {
+      const datosParaExcel = [
+        { nombre: "Producto A", categoria: "Electrónicos", precio: 100 },
+        { nombre: "Producto B", categoria: "Ropa", precio: 50 },
+        { nombre: "Producto C", categoria: "Electrónicos", precio: 200 },
+      ];
+
+      const response = await fetch("https://0z65l0ta55.execute-api.us-east-1.amazonaws.com/generarexcel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ datos: datosParaExcel }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en HTTP: ${response.status}`);
+      }
+
+      // Obtención de ArrayBuffer y conversión a archivo
+      const arrayBuffer = await response.arrayBuffer();
+      const base64 = arrayBufferToBase64(arrayBuffer);
+      // Ruta para guardar el archivo
+      const fileUri = FileSystem.documentDirectory + "reporte.xlsx";
+      await FileSystem.writeAsStringAsync(fileUri, base64, { encoding: FileSystem.EncodingType.Base64 });
+
+      // Compartir el archivo
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          dialogTitle: 'Descargar Reporte Excel'
+        });
+      } else {
+        alert("Compartir no disponible. Revisa la consola para logs.");
+      }
+    } catch (error) {
+      console.error("Error generando Excel:", error);
+      alert("Error:" + error.message);
+    }
+  };
+
+  const compartirDatosFirebase = async () => {
+    try {
+      const jsonString = JSON.stringify(productos);
+      await Clipboard.setStringAsync(jsonString);
+      const nombreArchivo = "productos.json";
+      const fileUri = FileSystem.cacheDirectory + nombreArchivo;
+      await FileSystem.writeAsStringAsync(fileUri, jsonString);
+      await Sharing.shareAsync(fileUri, {
+        mimeType: 'application/json',
+        dialogTitle: 'Compartir datos de Firebase (JSON)',
+      });
+
+      alert("Datos copiados al portapapeles y listos para compartir.");
+    } catch (error) {
+      console.error('Error al compartir JSON:', error);
+      alert('Error al compartir datos: ' + (error.message || error));
+    }
+  };
+
+  const arrayBufferToBase64 = (buffer) => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  };
+
   useEffect(() => {
     cargarDatos();
   }, []);
 
   return (
     <View style={styles.container}>
-
       <Button title="Cerrar Sesión" onPress={cerrarSesion} />
 
       <FormularioProductos
@@ -112,13 +175,16 @@ const Productos = ({cerrarSesion}) => {
         actualizarProducto={actualizarProducto}
         modoEdicion={modoEdicion}
       />
-      
-      <TablaProductos 
+
+      <TablaProductos
         productos={productos}
-        editarProducto={editarProducto} 
+        editarProducto={editarProducto}
         eliminarProducto={eliminarProducto}
       />
-      
+      <View style={{ marginVertical: 10, padding: 10, margin: 10 }}>
+        <Button title="Generar Excel" onPress={generarExcel} />
+        <Button title="Compartir JSON" onPress={compartirDatosFirebase} />
+      </View>
     </View>
   );
 };
@@ -128,5 +194,3 @@ const styles = StyleSheet.create({
 });
 
 export default Productos;
-
-

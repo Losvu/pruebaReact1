@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, View, StyleSheet,Button } from 'react-native';
 import { db } from '../database/firebaseConfig';
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc,getDoc } from 'firebase/firestore';
 import FormularioUsuarios from '../Components/FormularioUsuarios';
 import TablaUsuarios from '../Components/TablaUsuarios';
 
 const Usuarios = ({ cerrarSesion }) => {
     const [usuarios, setUsuarios] = useState([]);
-    const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', correo: '', telefono: '', edad: '' });
+    const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', correo: '', telefono: '', edad: '', rol: '', tiendasTexto: '' });
     const [modoEdicion, setModoEdicion] = useState(false);
     const [usuarioId, setUsuarioId] = useState(null);
 
@@ -52,14 +52,19 @@ const Usuarios = ({ cerrarSesion }) => {
   const datosValidados = await validarDatos(nuevoUsuario);
   if (datosValidados) {
     try {
+      const tiendasArray = (nuevoUsuario.rol?.toLowerCase() === 'administrador' && nuevoUsuario.tiendasTexto)
+        ? nuevoUsuario.tiendasTexto.split(',').map(t => t.trim()).filter(Boolean)
+        : [];
       await addDoc(collection(db, "usuarios"), {
         nombre: datosValidados.nombre,
         correo: datosValidados.correo,
         telefono: datosValidados.telefono,
         edad: parseInt(datosValidados.edad),
+        rol: nuevoUsuario.rol || '',
+        tiendas: tiendasArray,
       });
       cargarDatos();
-      setNuevoUsuario({ nombre: "", correo: "", telefono: "", edad: "" });
+      setNuevoUsuario({ nombre: "", correo: "", telefono: "", edad: "", rol: '', tiendasTexto: '' });
       Alert.alert("Éxito", "Usuario registrado correctamente.");
     } catch (error) {
       console.error("Error al registrar usuario:", error);
@@ -71,11 +76,16 @@ const Usuarios = ({ cerrarSesion }) => {
   const datosValidados = await validarDatos(nuevoUsuario);
   if (datosValidados) {
     try {
+      const tiendasArray = (nuevoUsuario.rol?.toLowerCase() === 'administrador' && nuevoUsuario.tiendasTexto)
+        ? nuevoUsuario.tiendasTexto.split(',').map(t => t.trim()).filter(Boolean)
+        : [];
       await updateDoc(doc(db, "usuarios", usuarioId), {
         nombre: datosValidados.nombre,
         correo: datosValidados.correo,
         telefono: datosValidados.telefono,
         edad: parseInt(datosValidados.edad),
+        rol: nuevoUsuario.rol || '',
+        tiendas: tiendasArray,
       });
       
       setModoEdicion(false);
@@ -106,6 +116,8 @@ const Usuarios = ({ cerrarSesion }) => {
             correo: usuario.correo || '',
             telefono: usuario.telefono || '',
             edad: usuario.edad != null ? String(usuario.edad) : '',
+            rol: usuario.rol || '',
+            tiendasTexto: Array.isArray(usuario.tiendas) ? usuario.tiendas.join(', ') : '',
         });
         setUsuarioId(usuario.id);
         setModoEdicion(true);

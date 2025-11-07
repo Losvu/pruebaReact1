@@ -4,63 +4,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import BotonEliminarProducto from "./BotonEliminarProducto.js";
 
 const TablaProductos = ({ productos, eliminarProducto, editarProducto }) => {
-
-  //metodo 1
-  const cargarDatosFirebase = async (nombreColeccion) => {
-    if (!nombreColeccion || typeof nombreColeccion !== 'string') {
-      console.error('Error: Se requiere un nombre de colección válido.');
-      return;
-    }
-
-    try {
-      const datosExportados = {};
-
-      // Obtener la referencia a la colección específica
-      const snapshot = await getDocs(collection(db, nombreColeccion));
-
-      // Mapear los documentos y agregarlos al objeto de resultados
-      datosExportados[nombreColeccion] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      return datosExportados;
-    } catch (error) {
-      console.error(`Error extrayendo datos de la colección '${nombreColeccion}':`, error);
-    }
-  };
-  //metodo 2
-  const exportarDatos = async () => {
-    try {
-      const jsonString = await cargarDatosDeFirebase("productos");
-      console.log("Datos cargados:", jsonString);
-
-      const baseFileName = "datos_firebase.txt";
-
-      await Clipboard.setStringAsync(jsonString);
-      console.log("Datos copiados al portapapeles");
-
-      if (!(await Sharing.isAvailableAsync())) {
-        alert("La función Compartir/Guardar no está disponible en tu dispositivo");
-        return;
-      }
-
-      const fileUri = FileSystem.cacheDirectory + baseFileName;
-      await FileSystem.writeAsStringAsync(fileUri, jsonString);
-
-      await Sharing.shareAsync(fileUri);
-      alert("Datos copiados al portapapeles y listos para compartir");
-    } catch (error) {
-      console.error("Error al exportar y compartir:", error);
-      alert("Error al exportar o compartir: " + error.message);
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <View style={{ marginVertical: 10 }}>
-        <Button title="Exportar" onPress={exportarDatos} />
-      </View>
       <Text style={styles.titulo}>Tabla de Productos</Text>
 
       {/* Encabezado de la tabla */}
@@ -97,8 +42,8 @@ const TablaProductos = ({ productos, eliminarProducto, editarProducto }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { 
+    flex: 1, 
     padding: 20,
     alignSelf: "stretch"
   },
@@ -120,7 +65,7 @@ const styles = StyleSheet.create({
   },
   celdaAcciones: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "row", 
     justifyContent: "center",
     alignItems: "center",
     gap: 8,
