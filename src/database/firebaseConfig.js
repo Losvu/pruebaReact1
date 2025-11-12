@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-get-random-values';
@@ -16,6 +17,7 @@ const firebaseConfig = {
   storageBucket: extra.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: extra.FIREBASE_MESSAGING_SENDER_ID,
   appId: extra.FIREBASE_APP_ID,
+  databaseURL: extra.FIREBASE_DATABASE_URL
 };
 
 // Inicializar Firebase
@@ -27,4 +29,6 @@ const auth = initializeAuth(app, {
 });
 const db = getFirestore(app);
 
-export { app, auth, db };
+const realtimeDB = getDatabase(app);
+
+export { app, auth, db, realtimeDB };
